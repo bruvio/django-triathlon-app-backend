@@ -4,3 +4,4 @@ exclude =
     __pycahche__,
     manage.py,
     settings.py
+    
