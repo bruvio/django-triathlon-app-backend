@@ -1,5 +1,3 @@
-from os import stat
-from django.http import response
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -13,8 +11,8 @@ TOKEN_URL = reverse('user:token')
 ME_URL = reverse('user:me')
 
 
-# helper function for creating users
 def create_user(**params):
+    """Helper function for creating users"""
     return get_user_model().objects.create_user(**params)
 
 
@@ -97,6 +95,7 @@ class PublicUserApiTests(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+
 class PrivateUserApiTests(TestCase):
     """Test API requests that require authentication"""
 
@@ -114,7 +113,7 @@ class PrivateUserApiTests(TestCase):
         response = self.client.get(ME_URL)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, {
+        self.assertEqual(response.data, {
             'name': self.user.name,
             'email': self.user.email
         })
@@ -123,8 +122,8 @@ class PrivateUserApiTests(TestCase):
         """Test that post is not allowed on the ME url"""
         response = self.client.post(ME_URL, {})
 
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-    
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)  # noqa: E501
+
     def test_update_user_profile(self):
         """Test updating authenticated user"""
         payload = {'name': 'New Name', 'password': 'newpassword345'}
