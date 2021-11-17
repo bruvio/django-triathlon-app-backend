@@ -15,6 +15,7 @@ RUN apk del .temp-build-deps
 RUN mkdir /app
 WORKDIR /app
 COPY ./app /app
+COPY . .
 
 RUN adduser -D user
 USER user
