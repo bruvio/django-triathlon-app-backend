@@ -26,6 +26,3 @@ services:
       - POSTGRES_DB=app
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=sneakypassword
-    ports:
-      - "5432:5432"
-
