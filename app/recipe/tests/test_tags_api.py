@@ -18,7 +18,7 @@ class PublicTagsApiTests(TestCase):
 
     def setUp(self):
         self.client = APIClient()
-    
+
     def test_login_required(self):
         """Test that login is required for retrieving tags"""
         response = self.client.get(TAGS_URL)
@@ -35,7 +35,7 @@ class PrivateTagsApiTests(TestCase):
             'privatepassword'
         )
         self.client = APIClient()
-        self.client.force_authentication(self.user)
+        self.client.force_authenticate(self.user)
 
     def test_retrieving_tags(self):
         """Test retrieving tags"""
@@ -44,14 +44,14 @@ class PrivateTagsApiTests(TestCase):
 
         response = self.client.get(TAGS_URL)
 
-        tags = Tag.object.all().order_by('-name')
+        tags = Tag.objects.all().order_by('-name')
         serializer = TagSerializer(tags, many=True)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
     def test_tags_limited_to_user(self):
         """Test that tags returned are for the authenticated user"""
-        user2 = get_user_model().objects.model.create_user(
+        user2 = get_user_model().objects.create_user(
             'other@testemail.com',
             'testpassword'
         )
@@ -60,13 +60,13 @@ class PrivateTagsApiTests(TestCase):
 
         response = self.client.get(TAGS_URL)
 
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['name'], tag.name)
 
     def test_create_tag_successful(self):
         """Test creating a new tag"""
-        payload = {'name': 'Simple'}
+        payload = {'name': 'Test tag'}
         self.client.post(TAGS_URL, payload)
 
         exists = Tag.objects.filter(
@@ -78,6 +78,6 @@ class PrivateTagsApiTests(TestCase):
     def test_create_tag_invalid(self):
         """Test creating a new tag with invalid payload"""
         payload = {'name': ''}
-        res = self.client.post(TAGS_URL, payload)
+        response = self.client.post(TAGS_URL, payload)
 
-        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
