@@ -23,6 +23,7 @@ def image_upload_url(recipe_id):
     """Return URL for recipe image upload"""
     return reverse('recipe:recipe-upload-image', args=[recipe_id])
 
+
 # /api/recipe/recipes/recipe_arg/
 def detail_url(recipe_id):
     """Return recipe detail URL for specific recipe"""
@@ -88,7 +89,7 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(response.data, serializer.data)
 
     def test_recipe_limited_to_user(self):
-        """Test retreiving recipe for user"""
+        """Test retrieving recipe for user"""
         user2 = get_user_model().objects.create_user(
             'other@testemail.com',
             'testpass2'
@@ -136,7 +137,7 @@ class PrivateRecipeApiTests(TestCase):
         tag1 = sample_tag(user=self.user, name='Vegan')
         tag2 = sample_tag(user=self.user, name='Dessert')
         payload = {
-            'title': 'Avacado lime cheesecake',
+            'title': 'Avocado lime cheesecake',
             'tags': [tag1.id, tag2.id],
             'time_minutes': 60,
             'price': 20.00
@@ -226,7 +227,7 @@ class RecipeImageUploadTests(TestCase):
             img = Image.new('RGB', (10, 10))
             img.save(ntf, format='JPEG')
             ntf.seek(0)
-            response = self.client.post(url, {'image': ntf}, format='multipart')
+            response = self.client.post(url, {'image': ntf}, format='multipart')  # noqa: E501
 
         self.recipe.refresh_from_db()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -236,5 +237,5 @@ class RecipeImageUploadTests(TestCase):
     def test_upload_image_bad_request(self):
         """Test uploading an invalid image"""
         url = image_upload_url(self.recipe.id)
-        response = self.client.post(url, {'image': 'notimage'}, format='multipart')
+        response = self.client.post(url, {'image': 'notimage'}, format='multipart')  # noqa: E501
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
