@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from app.recipe import serializers
 
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -194,3 +195,50 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(recipe.price, payload['price'])
         tags = recipe.tags.all()
         self.assertEqual(tags.count(), 0)
+
+    def test_filter_recipe_by_tags(self):
+        """Test returning recipes with specific tags"""
+        recipe1 = sample_recipe(user=self.user, title='Tai vegitable curry')
+        recipe2 = sample_recipe(user=self.user, title='Aubergine with tahini')
+        recipe3 = sample_recipe(user=self.user, title='Fish and Chips')
+        tag1 = sample_tag(user=self.user, name='Vegan')
+        tag2 = sample_tag(user=self.user, name='Vegetarian')
+        recipe1.tags.add(tag1)
+        recipe2.tags.add(tag2)
+
+        response = self.client.get(
+            RECIPES_URL,
+            {'tags': f'{tag1.id, tag2.id}'}
+        )
+
+        serializer1 = RecipeSerializer(recipe1)
+        serializer2 = RecipeSerializer(recipe2)
+        serializer3 = RecipeSerializer(recipe3)
+        self.assertIn(serializer1.data, response.data)
+        self.assertIn(serializer2.data, response.data)
+        self.assertNotIn(serializer3.data, response.data)
+
+    def test_filter_recipes_by_ingredients(self):
+        """Test returing recipes with specific ingredients"""
+        recipe1 = sample_recipe(user=self.user, title='PB&J on Toast')
+        recipe2 = sample_recipe(user=self.user, title='Chicken Tenders')
+        recipe3 = sample_recipe(user=self.user, title='Shepards Pie')
+        ingredient1 = sample_ingredient(user=self.user, title='bread')
+        ingredient2 = sample_ingredient(user=self.user, title='chicken')
+
+        recipe1.ingredients.add(ingredient1)
+        recipe2.ingredients.add(ingredient2)
+
+        response = self.client.get(
+            RECIPES_URL,
+            {'ingredients': f'{ingredient1.id, ingredient2.id}'}
+        )
+
+        serializer1 = RecipeSerializer(recipe1)
+        serializer2 = RecipeSerializer(recipe2)
+        serializer3 = RecipeSerializer(recipe3)
+
+        self.assertIn(serializer1.data, response.data)
+        self.assertIn(serializer2.data, response.data)
+        self.assertNotIn(serializer3.data, response.data)
+
