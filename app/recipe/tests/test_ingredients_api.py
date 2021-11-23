@@ -96,14 +96,13 @@ class PrivateIngredientsApiTests(TestCase):
             user=self.user
         )
         recipe.ingredients.add(ingredient1)
-        
+
         response = self.client.get(INGREDIENTS_URL, {'assigned_only': 1})
 
         serializer1 = IngredientSerializer(ingredient1)
         serializer2 = IngredientSerializer(ingredient2)
         self.assertIn(serializer1.data, response.data)
         self.assertNotIn(serializer2.data, response.data)
-
 
     def test_retrieve_ingredients_assigned_unique(self):
         """Test filtering ingredients by assigned returns unique items"""

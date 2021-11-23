@@ -22,7 +22,7 @@ class BaseRecipeViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.C
         queryset = self.queryset
         if assigned_only:
             queryset = queryset.filter(recipe__isnull=False)
-            
+
         return queryset.filter(user=self.request.user).order_by('-name').distinct()  # noqa: E501
 
     def perform_create(self, serializer):
@@ -64,7 +64,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if ingredients:
             ingredient_ids = self._params_to_ints(ingredients)
             queryset = queryset.filter(ingredients__id__in=ingredient_ids)
-        
+
         return queryset.filter(user=self.request.user)
 
     def get_serializer_class(self):
@@ -73,7 +73,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return serializers.RecipeDetailSerializer
         elif self.action == 'upload_image':
             return serializers.RecipeImageSerializer
-            
+
         return self.serializer_class
 
     def perform_create(self, serializer):
@@ -88,14 +88,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
             recipe,
             data=request.data
         )
- 
+
         if serializer.is_valid():
             serializer.save()
             return Response(
                 serializer.data,
                 status=status.HTTP_200_OK
             )
- 
+
         return Response(
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
