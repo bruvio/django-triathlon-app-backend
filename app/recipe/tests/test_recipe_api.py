@@ -1,5 +1,6 @@
 import tempfile
 import os
+
 from PIL import Image
 
 from django.contrib.auth import get_user_model
@@ -88,7 +89,7 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(response.data, serializer.data)
 
     def test_recipe_limited_to_user(self):
-        """Test retreiving recipe for user"""
+        """Test retrieving recipe for user"""
         user2 = get_user_model().objects.create_user(
             'other@testemail.com',
             'testpass2'
@@ -136,7 +137,7 @@ class PrivateRecipeApiTests(TestCase):
         tag1 = sample_tag(user=self.user, name='Vegan')
         tag2 = sample_tag(user=self.user, name='Dessert')
         payload = {
-            'title': 'Avacado lime cheesecake',
+            'title': 'Avocado lime cheesecake',
             'tags': [tag1.id, tag2.id],
             'time_minutes': 60,
             'price': 20.00
@@ -210,8 +211,8 @@ class RecipeImageUploadTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            'user@londonappdev.com',
-            'testpass'
+            'test@testuser.com',
+            "testpassword"
         )
         self.client.force_authenticate(self.user)
         self.recipe = sample_recipe(user=self.user)
@@ -237,7 +238,7 @@ class RecipeImageUploadTests(TestCase):
         """Test uploading an invalid image"""
         url = image_upload_url(self.recipe.id)
         response = self.client.post(url, {'image': 'notimage'}, format='multipart')  # noqa: E501
-
+        
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_filter_recipe_by_tags(self):
