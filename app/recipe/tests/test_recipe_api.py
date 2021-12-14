@@ -238,7 +238,7 @@ class RecipeImageUploadTests(TestCase):
         """Test uploading an invalid image"""
         url = image_upload_url(self.recipe.id)
         response = self.client.post(url, {'image': 'notimage'}, format='multipart')  # noqa: E501
-        
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_filter_recipe_by_tags(self):
