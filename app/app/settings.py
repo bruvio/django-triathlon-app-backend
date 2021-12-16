@@ -40,10 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     'core',
     'user',
     'recipe',
-    'corsheaders',
+    'activity',
 ]
 
 MIDDLEWARE = [
@@ -141,11 +142,11 @@ STATIC_ROOT = '/vol/web/static'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# new setting not auto-generated
+# ----------------- new settings not auto-generated ----------------
 
 AUTH_USER_MODEL = 'core.User'
 
-# attempt at fixing CORS error
+# CORS settings
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000"
 ]

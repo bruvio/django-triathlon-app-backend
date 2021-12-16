@@ -4,6 +4,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
     PermissionsMixin
 from django.conf import settings
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.utils import timezone
 
 
 def recipe_image_file_path(instance, filename):
@@ -84,6 +86,44 @@ class Recipe(models.Model):
     link = models.CharField(max_length=255, blank=True)
     ingredients = models.ManyToManyField('Ingredient')
     tags = models.ManyToManyField('Tag')
+    image = models.ImageField(null=True, upload_to=recipe_image_file_path)
+
+    def __str__(self):
+        return self.title
+
+
+class Activity(models.Model):
+    """Activity object"""
+
+    ACTIVITY_CHOICES = (
+        ('run', 'Run'),
+        ('bike', 'Bike'),
+        ('swim', 'Swim'),
+    )
+
+    ACTIVITY_TYPES = {
+        ('race', 'Race'),
+        ('workout', 'Workout'),
+        ('wu', 'Warm Up'),
+        ('cd', 'Cool Down'),
+    }
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    distance = models.DecimalField(max_digits=4, decimal_places=2)
+    time_hours = models.IntegerField()
+    time_minutes = models.IntegerField()
+    time_seconds = models.IntegerField()
+    elevation = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    sport = models.CharField(choices=ACTIVITY_CHOICES, default="run", max_length=255)  # noqa: E501
+    date = models.DateField(default=timezone.now)
+    start_time = models.TimeField(default='12:00')
+    title = models.CharField(max_length=255, default="My Workout"+str(timezone.now))  # noqa: E501
+    description = models.CharField(max_length=10000, blank=True)
+    type = models.CharField(choices=ACTIVITY_TYPES, default='workout', max_length=255)  # noqa: E501
+    effort = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(10)])  # noqa: E501
     image = models.ImageField(null=True, upload_to=recipe_image_file_path)
 
     def __str__(self):

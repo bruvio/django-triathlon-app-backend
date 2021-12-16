@@ -85,3 +85,23 @@ class ModelTests(TestCase):
 
         exp_path = f'uploads/recipe/{uuid}.jpg'
         self.assertEqual(file_path, exp_path)
+
+    def test_activity_str(self):
+        """Test the activity string representation"""
+        activity = models.Activity.objects.create(
+            user=sample_user(),
+            distance=5,
+            time_hours=0,
+            time_minutes=23,
+            time_seconds=52,
+            elevation=73,
+            sport='run',
+            date='2022-01-01',
+            start_time='12:00',
+            title='My first run',
+            description='This is my first run',
+            type='workout',
+            effort=5,
+        )
+
+        self.assertEqual(str(activity), activity.title)
