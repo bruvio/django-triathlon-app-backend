@@ -4,14 +4,16 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
     PermissionsMixin
 from django.conf import settings
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.utils import timezone
 
 
-def recipe_image_file_path(instance, filename):
-    """Generate file path for new recipe image"""
+def activity_image_file_path(instance, filename):
+    """Generate file path for new activity image"""
     ext = filename.split('.')[-1]
     filename = f'{uuid.uuid4()}.{ext}'
 
-    return os.path.join('uploads/recipe/', filename)
+    return os.path.join('uploads/activity/', filename)
 
 
 class UserManager(BaseUserManager):
@@ -48,43 +50,39 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
 
 
-class Tag(models.Model):
-    """Tag to be used for a recipe"""
-    name = models.CharField(max_length=255)
+class Activity(models.Model):
+    """Activity object"""
+
+    ACTIVITY_CHOICES = (
+        ('run', 'Run'),
+        ('bike', 'Bike'),
+        ('swim', 'Swim'),
+    )
+
+    ACTIVITY_TYPES = {
+        ('race', 'Race'),
+        ('workout', 'Workout'),
+        ('wu', 'Warm Up'),
+        ('cd', 'Cool Down'),
+    }
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE
     )
-
-    def __str__(self):
-        return self.name
-
-
-class Ingredient(models.Model):
-    """Ingredient to be used in recipe"""
-    name = models.CharField(max_length=255)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
-    )
-
-    def __str__(self):
-        return self.name
-
-
-class Recipe(models.Model):
-    """Recipe object"""
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE
-    )
-    title = models.CharField(max_length=255)
+    distance = models.DecimalField(max_digits=4, decimal_places=2)
+    time_hours = models.IntegerField()
     time_minutes = models.IntegerField()
-    price = models.DecimalField(max_digits=5, decimal_places=2)
-    link = models.CharField(max_length=255, blank=True)
-    ingredients = models.ManyToManyField('Ingredient')
-    tags = models.ManyToManyField('Tag')
-    image = models.ImageField(null=True, upload_to=recipe_image_file_path)
+    time_seconds = models.IntegerField()
+    elevation = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    sport = models.CharField(choices=ACTIVITY_CHOICES, default="run", max_length=255)  # noqa: E501
+    date = models.DateField(default=timezone.now)
+    start_time = models.TimeField(default='12:00')
+    title = models.CharField(max_length=255, default="My Workout"+str(timezone.now))  # noqa: E501
+    description = models.CharField(max_length=10000, blank=True)
+    type = models.CharField(choices=ACTIVITY_TYPES, default='workout', max_length=255)  # noqa: E501
+    effort = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(10)])  # noqa: E501
+    image = models.ImageField(null=True, upload_to=activity_image_file_path)
 
     def __str__(self):
         return self.title

@@ -47,41 +47,32 @@ class ModelTests(TestCase):
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
 
-    def test_tag_str(self):
-        """Test the tag's string representation"""
-        tag = models.Tag.objects.create(
+    def test_activity_str(self):
+        """Test the activity string representation"""
+        activity = models.Activity.objects.create(
             user=sample_user(),
-            name='Vegan'
+            distance=5,
+            time_hours=0,
+            time_minutes=23,
+            time_seconds=52,
+            elevation=73,
+            sport='run',
+            date='2022-01-01',
+            start_time='12:00',
+            title='My first run',
+            description='This is my first run',
+            type='workout',
+            effort=5,
         )
 
-        self.assertEqual(str(tag), tag.name)
-
-    def test_ingredient_str(self):
-        """Test the ingredient string representation"""
-        ingredient = models.Ingredient.objects.create(
-            user=sample_user(),
-            name='Cucumber'
-        )
-
-        self.assertEqual(str(ingredient), ingredient.name)
-
-    def test_recipe_str(self):
-        """Test the recipe string representation"""
-        recipe = models.Recipe.objects.create(
-            user=sample_user(),
-            title='Steak and mushroom sauce',
-            time_minutes=5,
-            price=5.00
-        )
-
-        self.assertEqual(str(recipe), recipe.title)
+        self.assertEqual(str(activity), activity.title)
 
     @patch('uuid.uuid4')
-    def test_recipe_filename_uuid(self, mock_uuid):
+    def test_activity_filename_uuid(self, mock_uuid):
         """Test image is saved in correct location"""
         uuid = 'test_uuid'
         mock_uuid.return_value = uuid
-        file_path = models.recipe_image_file_path(None, 'myimage.jpg')
+        file_path = models.activity_image_file_path(None, 'myimage.jpg')
 
-        exp_path = f'uploads/recipe/{uuid}.jpg'
+        exp_path = f'uploads/activity/{uuid}.jpg'
         self.assertEqual(file_path, exp_path)
