@@ -1,2 +1,2 @@
-# django-app-api
-A python app developed with the intent of learning django
+# django-triathlon-app-backend
+The backend of a triathlon training app developed with python django

@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'core',
     'user',
-    'recipe',
     'activity',
 ]
 
