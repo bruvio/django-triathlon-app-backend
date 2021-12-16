@@ -1,10 +1,14 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
 from activity import views
+
+
+router = DefaultRouter()
+router.register('activities', views.ActivityViewSet)
 
 app_name = 'activity'
 
 urlpatterns = [
-    path('create_activity/', views.BaseActivityViewSet),
-    path('manage_activity/', views.ActivityViewSet)
+    path('', include(router.urls))
 ]

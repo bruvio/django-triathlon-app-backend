@@ -45,9 +45,7 @@ class ActivityViewSet(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         """Return appropriate serializer class"""
-        if self.action == 'retrieve':
-            return serializers.ActivityDetailSerializer  # might need to implement later  # noqa: E501
-        elif self.action == 'upload_image':
+        if self.action == 'upload_image':
             return serializers.ActivityImageSerializer  # need to implement still  # noqa: E501
 
         return self.serializer_class
