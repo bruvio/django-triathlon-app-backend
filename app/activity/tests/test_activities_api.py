@@ -19,20 +19,19 @@ ACTIVITY_URL = reverse('activity:activity-list')
 def sample_activity(user, **params):
     """Create and return a sample activity"""
     defaults = {
-            'distance': 5,
-            'time_hours': 0,
-            'time_minutes': 23,
-            'time_seconds': 52,
-            'elevation': 73,
-            'sport': 'run',
-            'date': '2022-01-01',
-            'start_time': '12:00',
-            'title': 'My first run',
-            'description': 'This is my first run',
-            'type': 'workout',
-            'effort': 5,
-    }
-    defaults.update(params)
+        'distance': 5,
+        'time_hours': 0,
+        'time_minutes': 23,
+        'time_seconds': 52,
+        'elevation': 73,
+        'sport': 'run',
+        'date': '2022-01-01',
+        'start_time': '12:00',
+        'title': 'My first run',
+        'description': 'This is my first run',
+        'type': 'workout',
+        'effort': 5,
+    } | params
 
     return Activity.objects.create(user=user, **defaults)
 
